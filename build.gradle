@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.lorenz'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.minio:minio:8.5.8'
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+}
+
+jar {
+    archiveBaseName.set("lorenzfw")
+    archiveVersion.set("")
+}
+
+apply from: 'minio.gradle'
