@@ -1,9 +1,9 @@
-package org.lorenz.fw.handler;
+package org.lorenz.fw.api.rest.handler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public abstract class APIHandler
+public abstract class APIProcessor
 {
 	public Object preProcess(HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
