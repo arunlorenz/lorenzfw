@@ -18,5 +18,3 @@ jar {
     archiveBaseName.set("lorenzfw")
     archiveVersion.set("")
 }
-
-apply from: 'minio.gradle'
