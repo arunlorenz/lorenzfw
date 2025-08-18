@@ -21,7 +21,8 @@ public class TimeTrackFilter implements Filter
 
 	@Override public void init(FilterConfig filterConfig) throws ServletException
 	{
-
+		logger.log(Level.INFO, "TimeTrackerFilter initialized");
+		System.out.println("✅ TimeTrackerFilter initialized");
 	}
 
 	@Override public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException

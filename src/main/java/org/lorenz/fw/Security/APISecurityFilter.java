@@ -4,19 +4,24 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lorenz.fw.Security.APISecurityConfigLoader.ApiConfig;
 import org.lorenz.fw.Security.APISecurityConfigLoader.ApiParam;
 
 public class APISecurityFilter implements Filter
 {
-
+	private static final Logger logger = Logger.getLogger(APISecurityFilter.class.getName());
 	private Map<String, Map<String, ApiConfig>> methodUriMap;
 
 	@Override public void init(FilterConfig filterConfig) throws ServletException
 	{
 		try
 		{
+			logger.log(Level.INFO, "APISecurityFilter initialized");
+			System.out.println("✅ APISecurityFilter initialized");
 			String configDir = filterConfig.getServletContext().getRealPath("/WEB-INF/api-security");
 			methodUriMap = APISecurityConfigLoader.loadAllConfigs(configDir);
 		}
@@ -47,13 +52,20 @@ public class APISecurityFilter implements Filter
 
 		ApiConfig config = apiMap.get(path);
 
-		for (ApiParam param : config.getParams())
-		{
-			String value = httpReq.getParameter(param.getName());
+		Map<String, String[]> requestParams = httpReq.getParameterMap();
 
-			if (!param.isValid(value))
+		for (String paramName : requestParams.keySet())
+		{
+			Optional<ApiParam> configParam = config.getParamByName(paramName);
+			if (configParam.isEmpty())
 			{
-				httpResp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter: " + param.getName());
+				httpResp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unexpected parameter: " + paramName);
+				return;
+			}
+			String value = httpReq.getParameter(paramName);
+			if (!configParam.get().isValid(value))
+			{
+				httpResp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter: " + paramName);
 				return;
 			}
 		}
